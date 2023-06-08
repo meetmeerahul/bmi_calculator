@@ -1,10 +1,8 @@
 import 'package:bmi_calculator/constants/app_constants.dart';
-import 'package:bmi_calculator/constants/app_constants.dart';
+
 import 'package:bmi_calculator/widgets/letf_bar.dart';
 import 'package:bmi_calculator/widgets/right_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:hexcolor/hexcolor.dart';
 
 class BmiHomeScreen extends StatefulWidget {
   const BmiHomeScreen({super.key});
@@ -21,6 +19,8 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
   double _bmiResult = 0;
 
   String _textResult = "";
+
+  bool _redSignal = false;
 
   @override
   Widget build(BuildContext context) {
@@ -105,10 +105,13 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
 
                     if (_bmiResult > 25) {
                       _textResult = "You are Overweight";
+                      _redSignal = true;
                     } else if (_bmiResult >= 18.5 && _bmiResult < 25) {
                       _textResult = "You Are Healthy";
+                      _redSignal = false;
                     } else {
                       _textResult = "You Are Underweight";
+                      _redSignal = true;
                     }
                   });
                 },
@@ -128,7 +131,9 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
             SizedBox(
               child: Text(
                 _bmiResult.toStringAsFixed(2),
-                style: TextStyle(fontSize: 90, color: accentHexColor),
+                style: TextStyle(
+                    fontSize: 90,
+                    color: (_redSignal ? Colors.red : Colors.green.shade600)),
               ),
             ),
             const SizedBox(
@@ -142,7 +147,7 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
                   style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
-                      color: accentHexColor),
+                      color: (_redSignal ? Colors.red : Colors.green.shade600)),
                 ),
               ),
             ),
