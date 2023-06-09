@@ -1,4 +1,7 @@
 import 'package:bmi_calculator/constants/app_constants.dart';
+import 'package:bmi_calculator/dbfunctions/bmidb.dart';
+import 'package:bmi_calculator/models/bmi_model.dart';
+import 'package:bmi_calculator/screen/previous_results.dart';
 
 import 'package:bmi_calculator/widgets/letf_bar.dart';
 import 'package:bmi_calculator/widgets/right_bar.dart';
@@ -99,7 +102,7 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
                 onTap: () {
                   double _h = double.parse(_heightController.text);
                   double _w = double.parse(_weightController.text);
-
+                  print('Hello');
                   setState(() {
                     _bmiResult = (_w / _h / _h) * 10000;
 
@@ -114,6 +117,7 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
                       _redSignal = true;
                     }
                   });
+                  addData(context, _bmiResult);
                 },
                 child: Text(
                   'Calculate',
@@ -175,9 +179,39 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
               height: 10,
             ),
             const RightBAr(barwidth: 40),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PreviousResults()));
+              },
+              child: Text(
+                "View Previous Results",
+                style: TextStyle(
+                    color: Colors.yellow.shade500,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  Future<void> addData(BuildContext context, double bmiResult) async {
+    print("add data");
+    final _height = _heightController.text.trim();
+    final _weight = _weightController.text.trim();
+    String bmiToAdd = bmiResult.toString();
+
+    if (_height.isNotEmpty && _weight.isNotEmpty) {
+      final _bmi = BmiModel(bmi: bmiToAdd, weight: _weight, height: _height);
+
+      print(_bmi);
+
+      addBmiData(_bmi);
+    }
   }
 }
