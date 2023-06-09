@@ -12,7 +12,7 @@ Future<void> addBmiData(BmiModel value) async {
   print(_id);
   getBmiData();
   bmiNotifier.value.add(value);
-  bmiNotifier.notifyListeners();
+  // bmiNotifier.notifyListeners();
 }
 
 Future<void> getBmiData() async {
@@ -22,6 +22,12 @@ Future<void> getBmiData() async {
 
   for (var i in data) {
     bmiNotifier.value.add(i);
-    bmiNotifier.notifyListeners();
+    //bmiNotifier.notifyListeners();
   }
+}
+
+Future<void> deleteData(int id) async {
+  final bmiData = await Hive.openBox<BmiModel>('bmi_db');
+  bmiData.deleteAt(id);
+  getBmiData();
 }

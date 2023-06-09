@@ -106,6 +106,10 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
                   setState(() {
                     _bmiResult = (_w / _h / _h) * 10000;
 
+                    String inString = _bmiResult.toStringAsFixed(1);
+
+                    _bmiResult = double.parse(inString);
+
                     if (_bmiResult > 25) {
                       _textResult = "You are Overweight";
                       _redSignal = true;
@@ -181,6 +185,14 @@ class _BmiHomeScreenState extends State<BmiHomeScreen> {
             const RightBAr(barwidth: 40),
             InkWell(
               onTap: () {
+                _heightController.text = "";
+                _weightController.text = "";
+
+                setState(() {
+                  _bmiResult = 0;
+                  _textResult = "";
+                });
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(

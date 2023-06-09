@@ -1,9 +1,7 @@
-import 'package:bmi_calculator/constants/app_constants.dart';
 import 'package:bmi_calculator/dbfunctions/bmidb.dart';
 import 'package:bmi_calculator/models/bmi_model.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class PreviousResults extends StatefulWidget {
   const PreviousResults({super.key});
@@ -15,6 +13,7 @@ class PreviousResults extends StatefulWidget {
 class _PreviousResultsState extends State<PreviousResults> {
   @override
   Widget build(BuildContext context) {
+    getBmiData();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -24,45 +23,121 @@ class _PreviousResultsState extends State<PreviousResults> {
             fontWeight: FontWeight.w300,
           ),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: const Color.fromARGB(96, 44, 44, 44),
         elevation: 0,
         centerTitle: true,
       ),
       body: ValueListenableBuilder(
         valueListenable: bmiNotifier,
         builder: (BuildContext ctx, List<BmiModel> bmiList, Widget? child) {
-          return ListView.separated(
-            itemBuilder: (ctx, index) {
-              final data = bmiList[index];
-
-              return ListTile(
-                  title: Row(
-                children: [
-                  Text(
-                    data.height,
-                    style: const TextStyle(color: Colors.black),
+          if (bmiList.length == 0) {
+            return const Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Center(
+                child: Text(
+                  'No Previous Results Available',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20),
+                ),
+              ),
+            );
+          } else {
+            return ListView.separated(
+              itemBuilder: (ctx, index) {
+                final data = bmiList[index];
+                return ListTile(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Height- ${data.height} CM",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Weight-${data.weight} KG",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "BMI - ${data.bmi} ",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () => deleteResult(context, index),
+                        child: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    data.weight,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(data.bmi, style: const TextStyle(color: Colors.black))
-                ],
-              ));
-            },
-            separatorBuilder: (ctx, index) {
-              return const Divider();
-            },
-            itemCount: bmiList.length,
-          );
+                );
+              },
+              separatorBuilder: (ctx, index) {
+                return Container(
+                  height: 1,
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: const Divider(),
+                );
+              },
+              itemCount: bmiList.length,
+            );
+          }
         },
       ),
+      backgroundColor: const Color.fromARGB(96, 44, 44, 44),
+    );
+  }
+
+  deleteResult(BuildContext context, index) {
+    showDialog(
+      context: context,
+      builder: ((ctx) => AlertDialog(
+            content: const Text('really want to delete '),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  deleteData(index);
+
+                  Navigator.of(context).pop(ctx);
+                  setState(() {
+                    getBmiData();
+                  });
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(ctx),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.black),
+                ),
+              )
+            ],
+          )),
     );
   }
 }
